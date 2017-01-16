@@ -1,5 +1,0 @@
-Soon
-<?php
-$URL = $_SERVER[SERVER_NAME];
-$user= str_replace(".your-domain.com","",$URL);
-echo $user;
