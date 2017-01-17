@@ -9,16 +9,16 @@ class DefaultController extends Controller
     public function indexAction(\Symfony\Component\HttpFoundation\Request $request)
     {
 
-        $forbiden_hosts = array($this->getParameter('base_url'), "smtp", "www", "ftp");
-        var_dump($forbiden_hosts);
+        $forbidden_hosts = array("smtp", "www", "ftp", "homepage");
         $host = $request->getHost();
         $base_host = ".".$this->getParameter('base_url');
         $user = str_replace($base_host,"",$host);
 
-        if (in_array($user, $forbiden_hosts))
-            echo "forbidden value ";
-        else
-            echo $user." bientôt";
-        return $this->render('TesBoBundle:Default:index.html.twig');
+        if ($user == $this->getParameter('base_url'))
+            $user = "homepage";
+        elseif (in_array($user, $forbidden_hosts))
+            $user = "forbidden";
+
+        return $this->render('TesBoBundle:Default:index.html.twig', array('user' => $user));
     }
 }

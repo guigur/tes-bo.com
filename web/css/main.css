@@ -881,6 +881,8 @@ ul.tag-cloud li {
 }
 #bottom {
   color: #bdc3c7;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 #bottom h4 {
   margin-top: 0;
