@@ -1,0 +1,3 @@
+tes_bo_homepage:
+    path:     /
+    defaults: { _controller: TesBoBundle:Default:index }
