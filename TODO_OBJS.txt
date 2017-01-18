@@ -1,0 +1,37 @@
++---> users
+	> id
+	> pseudo
+	> password
+	> datetime registered
+	> bool banned
+	> ban_motif
+	> datetime ban_until
+
++---> gallerie
+	> id
+	> id users
+	> bool enabled
+	> datetime created
+	
++---> photos
+	> id
+	> id gallerie
+	> title
+	> description
+	> blob photo
+	> bool visible
+	> datetime posted
+	
++---> likes
+	> id
+	> id photo
+	> id user
+	> bool bo
+	> datetime liked
+	
++---> music
+	> id
+	> id gallerie
+	> title
+	> blob music
+	
