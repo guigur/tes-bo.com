@@ -4,12 +4,12 @@ namespace TesBoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 /**
- * Galeries
+ * Galleries
  *
- * @ORM\Table(name="galeries")
+ * @ORM\Table(name="Galleries")
  * @ORM\Entity(repositoryClass="TesBoBundle\Repository\GalleriesRepository")
  */
-class Galeries
+class Galleries
 {
     /**
      * @var int
@@ -26,6 +26,13 @@ class Galeries
      * @ORM\OneToOne(targetEntity="TesBoBundle\Entity\Users", cascade={"persist"})
      */
     private $user;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
 
     /**
      * @var bool
@@ -74,6 +81,30 @@ class Galeries
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Galleries
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
