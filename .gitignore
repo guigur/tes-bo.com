@@ -6,6 +6,9 @@
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 
+app/config/parameters.yml
+app/config/config.yml
+
 # Email spool folder
 /app/spool/*
 
