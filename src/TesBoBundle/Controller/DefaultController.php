@@ -2,7 +2,6 @@
 
 namespace TesBoBundle\Controller;
 
-use Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection\TestType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller

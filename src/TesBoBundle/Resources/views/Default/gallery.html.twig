@@ -4,11 +4,12 @@ gallerie
 
 medias
 
-{{ dump(medias)}}
-
  {% for media in medias %}
   {{ media.title }}
   {{ media.media }}
 
   <img src="data:image/png;base64,{{ media.mediaPath }}">
+  <audio controls="controls">
+   <source src="data:audio;base64{{ media.mediaPath }}" type="audio/mp3">
+  </audio>
  {% endfor %}
