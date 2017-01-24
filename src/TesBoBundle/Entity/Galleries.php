@@ -23,7 +23,7 @@ class Galleries
     /**
      * @var int
      *
-     * @ORM\OneToOne(targetEntity="TesBoBundle\Entity\Users", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="TesBoBundle\Entity\Users", cascade={"persist"})
      */
     private $user;
 

@@ -1,1 +1,14 @@
 gallerie
+
+{{ dump(gallery) }}
+
+medias
+
+{{ dump(medias)}}
+
+ {% for media in medias %}
+  {{ media.title }}
+  {{ media.media }}
+
+  <img src="data:image/png;base64,{{ media.mediaPath }}">
+ {% endfor %}

@@ -24,14 +24,14 @@ class Medias
     /**
      * @var int
      *
-     * @ORM\OneToOne(targetEntity="TesBoBundle\Entity\Galeries", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="TesBoBundle\Entity\Galleries", cascade={"persist"})
      */
-    private $galerie;
+    private $gallerie;
 
     /**
      * @var int
      *
-     * @ORM\OneToOne(targetEntity="TesBoBundle\Entity\Users", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="TesBoBundle\Entity\Users", cascade={"persist"})
      */
     private $user;
 
@@ -70,6 +70,7 @@ class Medias
      */
     private $datetimePosted;
 
+    private $mediaPath;
 
     /**
      * Get id
@@ -82,27 +83,27 @@ class Medias
     }
 
     /**
-     * Set galerie
+     * Set gallerie
      *
-     * @param integer $galerie
+     * @param integer $gallerie
      *
      * @return Medias
      */
-    public function setGalerie($galerie)
+    public function setGallerie($gallerie)
     {
-        $this->galerie = $galerie;
+        $this->gallerie = $gallerie;
     
         return $this;
     }
 
     /**
-     * Get galerie
+     * Get gallerie
      *
      * @return integer
      */
-    public function getGalerie()
+    public function getGallerie()
     {
-        return $this->galerie;
+        return $this->gallerie;
     }
 
     /**
@@ -247,6 +248,30 @@ class Medias
     public function getDatetimePosted()
     {
         return $this->datetimePosted;
+    }
+
+    /**
+     * Set mediaPath
+     *
+     * @param string $mediaPath
+     *
+     * @return Medias
+     */
+    public function setMediaPath($mediaPath)
+    {
+        $this->mediaPath = $mediaPath;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaPath
+     *
+     * @return string
+     */
+    public function getMediaPath()
+    {
+        return $this->mediaPath;
     }
 }
 

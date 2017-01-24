@@ -2,6 +2,7 @@
 
 namespace TesBoBundle\Controller;
 
+use Doctrine\Bundle\DoctrineBundle\Tests\DependencyInjection\TestType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
@@ -12,6 +13,17 @@ class DefaultController extends Controller
             ->getRepository('TesBoBundle:Galleries')
             ->findByName($name);
         return $gallery;
+    }
+
+    public function getMedias($galleryID)
+    {
+        $medias = $this->getDoctrine()
+            ->getRepository('TesBoBundle:Medias')
+            ->findByGallerie($galleryID);
+
+        foreach ($medias as $key => $entity)
+            $medias[$key]->setMediaPath(base64_encode(stream_get_contents($entity->getMedia())));
+        return $medias;
     }
 
     public function indexAction(\Symfony\Component\HttpFoundation\Request $request)
@@ -29,7 +41,11 @@ class DefaultController extends Controller
 
         $gallery = self::getGaleries($user);
         if ($gallery)
-            return $this->render('TesBoBundle:Default:gallery.html.twig', array('user' => $user, "gallery" => $gallery));
+        {
+
+            $medias = self::getMedias($gallery[0]->getId());
+            return $this->render('TesBoBundle:Default:gallery.html.twig', array('user' => $user, "gallery" => $gallery, "medias" => $medias));
+        }
         else
             return $this->render('TesBoBundle:Default:index.html.twig', array('user' => $user, "gallery" => $gallery));
     }
