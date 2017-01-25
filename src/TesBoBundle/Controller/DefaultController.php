@@ -21,11 +21,8 @@ class DefaultController extends Controller
             ->findByGallerie($galleryID);
 
         foreach ($medias as $key => $entity)
-        {
-            //echo $entity->getMediaType()->getFamily();
             $entity->setMediaPath(base64_encode(stream_get_contents($entity->getMedia())));
-        }
-            return $medias;
+        return $medias;
     }
 
     public function indexAction(\Symfony\Component\HttpFoundation\Request $request)
