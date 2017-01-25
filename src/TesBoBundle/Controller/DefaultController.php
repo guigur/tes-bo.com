@@ -6,11 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
-    public function getGaleries($name)
+    public function getGallerie($name)
     {
         $gallery = $this->getDoctrine()
             ->getRepository('TesBoBundle:Galleries')
-            ->findByName($name);
+            ->findOneByName($name);
         return $gallery;
     }
 
@@ -21,8 +21,11 @@ class DefaultController extends Controller
             ->findByGallerie($galleryID);
 
         foreach ($medias as $key => $entity)
-            $medias[$key]->setMediaPath(base64_encode(stream_get_contents($entity->getMedia())));
-        return $medias;
+        {
+            //echo $entity->getMediaType()->getFamily();
+            $entity->setMediaPath(base64_encode(stream_get_contents($entity->getMedia())));
+        }
+            return $medias;
     }
 
     public function indexAction(\Symfony\Component\HttpFoundation\Request $request)
@@ -38,11 +41,9 @@ class DefaultController extends Controller
         elseif (in_array($user, $forbidden_hosts))
             $user = "forbidden";
 
-        $gallery = self::getGaleries($user);
-        if ($gallery)
+        if ($gallery = self::getGallerie($user))
         {
-
-            $medias = self::getMedias($gallery[0]->getId());
+            $medias = self::getMedias($gallery->getId());
             return $this->render('TesBoBundle:Default:gallery.html.twig', array('user' => $user, "gallery" => $gallery, "medias" => $medias));
         }
         else

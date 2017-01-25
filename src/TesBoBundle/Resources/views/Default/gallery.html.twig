@@ -1,15 +1,22 @@
 gallerie
 
 {{ dump(gallery) }}
-
+<title>{{ gallery.name }}</title>
 medias
 
  {% for media in medias %}
   {{ media.title }}
   {{ media.media }}
 
-  <img src="data:image/png;base64,{{ media.mediaPath }}">
-  <audio controls="controls">
-   <source src="data:audio/mp3;base64,{{ media.mediaPath }}" type="audio/mp3">
-  </audio>
+  {% if media.mediaType.family == "img" %}
+   <img src="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}">
+  {% elseif media.mediaType.family == "audio" %}
+   <audio controls autoplay loop>
+    <source src="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}" type="{{ media.mediaType.code }}">
+   </audio>
+  {% elseif media.mediaType.family == "video" %}
+  {% else %}
+   This media type is unknown and won't be loaded
+  {% endif %}
+
  {% endfor %}

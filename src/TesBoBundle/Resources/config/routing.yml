@@ -1,3 +1,7 @@
 tes_bo_homepage:
     path:     /
     defaults: { _controller: TesBoBundle:Default:index }
+
+tes_bo_about:
+    path:     /Apropos
+    defaults: { _controller: TesBoBundle:Default:about }

@@ -57,6 +57,13 @@ class Medias
     private $media;
 
     /**
+     * @var integer
+     *
+     * @ORM\ManyToOne(targetEntity="TesBoBundle\Entity\MediaTypes", cascade={"persist"})
+     */
+    private $mediaType;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="isVisible", type="boolean")
@@ -70,6 +77,9 @@ class Medias
      */
     private $datetimePosted;
 
+    /**
+     * @var string
+     */
     private $mediaPath;
 
     /**
@@ -200,6 +210,30 @@ class Medias
     public function getMedia()
     {
         return $this->media;
+    }
+
+    /**
+     * Set mediaType
+     *
+     * @param integer $mediaType
+     *
+     * @return Medias
+     */
+    public function setMediaType($mediaType)
+    {
+        $this->mediaType = $mediaType;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaType
+     *
+     * @return integer
+     */
+    public function getMediaType()
+    {
+        return $this->mediaType;
     }
 
     /**
