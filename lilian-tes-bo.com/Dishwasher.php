@@ -62,8 +62,8 @@
         </table>
 
 
-        <script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
-        <script type="text/javascript" src="js/JQuerryRotate.js"></script>
+        <script type="text/javascript" src="../web/js/jquery-2.2.0.min.js"></script>
+        <script type="text/javascript" src="../web/js/JQuerryRotate.js"></script>
         <script>
             var rotation = function (){
                 $("#lili_dishwasher").rotate({
