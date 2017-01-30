@@ -60,7 +60,7 @@
     {% for media in medias %}
      {% if media.mediaType.family == "image" %}
     <div class="content">
-     <div><a href="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}"><img src="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}" height="140px" class="thumb"></a></div>
+     <div><a href="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}"><img src="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}" title="{{ media.title }}" height="140px" class="thumb"></a></div>
     </div>
      {% elseif media.mediaType.family == "video" %}
      {% else %}
