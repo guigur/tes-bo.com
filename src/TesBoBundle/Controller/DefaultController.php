@@ -3,6 +3,9 @@
 namespace TesBoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+require_once __DIR__ . "vendor/autoload.php";
+use duncan3dc\Speaker\TextToSpeech;
+use duncan3dc\Speaker\Providers\GoogleProvider;
 
 class DefaultController extends Controller
 {
@@ -43,7 +46,16 @@ class DefaultController extends Controller
             $medias = self::getMedias($gallery->getId());
             return $this->render('TesBoBundle:Default:gallery.html.twig', array('user' => $user, "gallery" => $gallery, "medias" => $medias));
         }
-        else
+        else {
+
+
+
+            $provider = new GoogleProvider;
+
+            $tts = new TextToSpeech("Hello World", $provider);
+            $tts->save("/tmp/hello.mp3");
+
             return $this->render('TesBoBundle:Default:index.html.twig', array('user' => $user, "gallery" => $gallery));
+        }
     }
 }
