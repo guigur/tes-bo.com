@@ -3,6 +3,7 @@
 namespace TesBoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+<<<<<<< HEAD
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -14,6 +15,11 @@ use TesBoBundle\Entity\MediaTypes;
 
 
 //use AppBundle\Entity\Task;
+=======
+require_once __DIR__ . "vendor/autoload.php";
+use duncan3dc\Speaker\TextToSpeech;
+use duncan3dc\Speaker\Providers\GoogleProvider;
+>>>>>>> c2ccd2d5aca7cb553776f323d1aa8ffae0219ff7
 
 class DefaultController extends Controller
 {
@@ -54,8 +60,17 @@ class DefaultController extends Controller
             $medias = self::getMedias($gallery->getId());
             return $this->render('TesBoBundle:Default:gallery.html.twig', array('user' => $user, "gallery" => $gallery, "medias" => $medias));
         }
-        else
+        else {
+
+
+
+            $provider = new GoogleProvider;
+
+            $tts = new TextToSpeech("Hello World", $provider);
+            $tts->save("/tmp/hello.mp3");
+
             return $this->render('TesBoBundle:Default:index.html.twig', array('user' => $user, "gallery" => $gallery));
+        }
     }
 
     public function addMediaTypeAction(Request $request)
