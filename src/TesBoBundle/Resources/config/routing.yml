@@ -5,8 +5,3 @@ tes_bo_homepage:
 tes_bo_about:
     path:     /Apropos
     defaults: { _controller: TesBoBundle:Default:about }
-
-
-tes_bo_add_media:
-    path:     /addMedia
-    defaults: { _controller: TesBoBundle:Default:addMedia }
