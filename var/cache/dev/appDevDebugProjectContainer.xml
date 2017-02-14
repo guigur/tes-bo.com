@@ -463,7 +463,11 @@
                 <argument>FQIuaVTkJG</argument>
                 <argument>0</argument>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <argument>EjCiOaMhD62O7lhUnJ7jf-</argument>
+=======
+                <argument>9uK+lJkcDZKbUzuRmfGhiu</argument>
+>>>>>>> parent of a6cadbf... added form test add media not working
                 <argument>C:\Users\guigur\Documents\tes-bo.com\var\cache\dev/pools</argument>
 =======
                 <argument>cGfYAa9c4FuEa4lSCfY3Zh</argument>
@@ -636,10 +640,14 @@
           <argument>cKQy44Ctyq</argument>
           <argument>null</argument>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <argument>EjCiOaMhD62O7lhUnJ7jf-</argument>
 =======
           <argument>cGfYAa9c4FuEa4lSCfY3Zh</argument>
 >>>>>>> c2ccd2d5aca7cb553776f323d1aa8ffae0219ff7
+=======
+          <argument>9uK+lJkcDZKbUzuRmfGhiu</argument>
+>>>>>>> parent of a6cadbf... added form test add media not working
           <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
           <factory class="Symfony\Component\PropertyAccess\PropertyAccessor" method="createCache"/>
         </service>
@@ -661,7 +669,11 @@
       <argument>hvVHbXrPB0</argument>
       <argument>0</argument>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <argument>EjCiOaMhD62O7lhUnJ7jf-</argument>
+=======
+      <argument>9uK+lJkcDZKbUzuRmfGhiu</argument>
+>>>>>>> parent of a6cadbf... added form test add media not working
       <argument>C:\Users\guigur\Documents\tes-bo.com\var\cache\dev/pools</argument>
 =======
       <argument>cGfYAa9c4FuEa4lSCfY3Zh</argument>
@@ -676,7 +688,11 @@
       <argument>TcIVF7SVNd</argument>
       <argument>0</argument>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <argument>EjCiOaMhD62O7lhUnJ7jf-</argument>
+=======
+      <argument>9uK+lJkcDZKbUzuRmfGhiu</argument>
+>>>>>>> parent of a6cadbf... added form test add media not working
       <argument>C:\Users\guigur\Documents\tes-bo.com\var\cache\dev/pools</argument>
 =======
       <argument>cGfYAa9c4FuEa4lSCfY3Zh</argument>
@@ -1674,10 +1690,14 @@
         <argument type="service">
           <service class="Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider" public="false">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <argument>58a0a7cb6e07d0.83669729</argument>
 =======
             <argument>588f5fe5c3eb16.25379804</argument>
 >>>>>>> c2ccd2d5aca7cb553776f323d1aa8ffae0219ff7
+=======
+            <argument>588e833bd1a1d6.87577074</argument>
+>>>>>>> parent of a6cadbf... added form test add media not working
           </service>
         </argument>
       </argument>
@@ -1826,10 +1846,14 @@
           <service class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
             <argument type="service" id="security.token_storage"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <argument>58a0a7cb6e07d0.83669729</argument>
 =======
             <argument>588f5fe5c3eb16.25379804</argument>
 >>>>>>> c2ccd2d5aca7cb553776f323d1aa8ffae0219ff7
+=======
+            <argument>588e833bd1a1d6.87577074</argument>
+>>>>>>> parent of a6cadbf... added form test add media not working
             <argument type="service" id="monolog.logger.security" on-invalid="null"/>
             <argument type="service" id="security.authentication.manager"/>
           </service>
