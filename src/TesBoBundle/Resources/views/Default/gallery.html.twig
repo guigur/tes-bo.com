@@ -41,7 +41,7 @@
  <div style="position: relative; left: -50%; 1px; z-index: 1000">
      {% for media in medias %}
         {% if media.mediaType.family == "audio" %}
-         <audio controls autoplay>
+         <audio controls autoplay loop>
            <source src="data:{{ media.mediaType.code }};base64,{{ media.mediaPath }}" type="audio/mp3">
            Your browser does not support the audio element.
         </audio>
