@@ -5,3 +5,7 @@ tes_bo_homepage:
 tes_bo_about:
     path:     /Apropos
     defaults: { _controller: TesBoBundle:Default:about }
+
+tes_bo_register:
+    path:     /BecomeBo
+    defaults: { _controller: TesBoBundle:Default:register }

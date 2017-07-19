@@ -87,17 +87,19 @@ class DoctrineExtension extends AbstractDoctrineExtension
             $this->ormLoad($config['orm'], $container);
         }
 
-        $this->addClassesToCompile(array(
-            'Doctrine\\Common\\Annotations\\DocLexer',
-            'Doctrine\\Common\\Annotations\\FileCacheReader',
-            'Doctrine\\Common\\Annotations\\PhpParser',
-            'Doctrine\\Common\\Annotations\\Reader',
-            'Doctrine\\Common\\Lexer',
-            'Doctrine\\Common\\Persistence\\ConnectionRegistry',
-            'Doctrine\\Common\\Persistence\\Proxy',
-            'Doctrine\\Common\\Util\\ClassUtils',
-            'Doctrine\\Bundle\\DoctrineBundle\\Registry',
-        ));
+        if (PHP_VERSION_ID < 70000) {
+            $this->addClassesToCompile(array(
+                'Doctrine\\Common\\Annotations\\DocLexer',
+                'Doctrine\\Common\\Annotations\\FileCacheReader',
+                'Doctrine\\Common\\Annotations\\PhpParser',
+                'Doctrine\\Common\\Annotations\\Reader',
+                'Doctrine\\Common\\Lexer',
+                'Doctrine\\Common\\Persistence\\ConnectionRegistry',
+                'Doctrine\\Common\\Persistence\\Proxy',
+                'Doctrine\\Common\\Util\\ClassUtils',
+                'Doctrine\\Bundle\\DoctrineBundle\\Registry',
+            ));
+        }
     }
 
     /**
@@ -135,16 +137,6 @@ class DoctrineExtension extends AbstractDoctrineExtension
 
         $container->setParameter('doctrine.connections', $connections);
         $container->setParameter('doctrine.default_connection', $this->defaultConnection);
-
-        $def = $container->getDefinition('doctrine.dbal.connection');
-        if (method_exists($def, 'setFactory')) {
-            // to be inlined in dbal.xml when dependency on Symfony DependencyInjection is bumped to 2.6
-            $def->setFactory(array(new Reference('doctrine.dbal.connection_factory'), 'createConnection'));
-        } else {
-            // to be removed when dependency on Symfony DependencyInjection is bumped to 2.6
-            $def->setFactoryService('doctrine.dbal.connection_factory');
-            $def->setFactoryMethod('createConnection');
-        }
 
         foreach ($config['connections'] as $name => $connection) {
             $this->loadDbalConnection($name, $connection, $container);
@@ -206,23 +198,6 @@ class DoctrineExtension extends AbstractDoctrineExtension
         $container->setDefinition(sprintf('doctrine.dbal.%s_connection.event_manager', $name), new DefinitionDecorator('doctrine.dbal.connection.event_manager'));
 
         // connection
-        // PDO ignores the charset property before 5.3.6 so the init listener has to be used instead.
-        if (isset($connection['charset']) && version_compare(PHP_VERSION, '5.3.6', '<')) {
-            if ((isset($connection['driver']) && stripos($connection['driver'], 'mysql') !== false) ||
-                 (isset($connection['driver_class']) && stripos($connection['driver_class'], 'mysql') !== false)) {
-                $mysqlSessionInit = new Definition('%doctrine.dbal.events.mysql_session_init.class%');
-                $mysqlSessionInit->setArguments(array($connection['charset']));
-                $mysqlSessionInit->setPublic(false);
-                $mysqlSessionInit->addTag('doctrine.event_subscriber', array('connection' => $name));
-
-                $container->setDefinition(
-                    sprintf('doctrine.dbal.%s_connection.events.mysqlsessioninit', $name),
-                    $mysqlSessionInit
-                );
-                unset($connection['charset']);
-            }
-        }
-
         $options = $this->getConnectionOptions($connection);
 
         $def = $container
@@ -372,26 +347,7 @@ class DoctrineExtension extends AbstractDoctrineExtension
 
         $container->setAlias('doctrine.orm.entity_manager', sprintf('doctrine.orm.%s_entity_manager', $config['default_entity_manager']));
 
-        // BC logic to handle DoctrineBridge < 2.6
-        if (!method_exists($this, 'fixManagersAutoMappings')) {
-            foreach ($config['entity_managers'] as $entityManager) {
-                if ($entityManager['auto_mapping'] && count($config['entity_managers']) > 1) {
-                    throw new \LogicException('You cannot enable "auto_mapping" when several entity managers are defined.');
-                }
-            }
-        } else {
-            $config['entity_managers'] = $this->fixManagersAutoMappings($config['entity_managers'], $container->getParameter('kernel.bundles'));
-        }
-
-        $def = $container->getDefinition('doctrine.orm.entity_manager.abstract');
-        if (method_exists($def, 'setFactory')) {
-            // to be inlined in dbal.xml when dependency on Symfony DependencyInjection is bumped to 2.6
-            $def->setFactory(array('%doctrine.orm.entity_manager.class%', 'create'));
-        } else {
-            // to be removed when dependency on Symfony DependencyInjection is bumped to 2.6
-            $def->setFactoryClass('%doctrine.orm.entity_manager.class%');
-            $def->setFactoryMethod('create');
-        }
+        $config['entity_managers'] = $this->fixManagersAutoMappings($config['entity_managers'], $container->getParameter('kernel.bundles'));
 
         $loadPropertyInfoExtractor = interface_exists('Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface')
             && class_exists('Symfony\Bridge\Doctrine\PropertyInfo\DoctrineExtractor');
@@ -472,7 +428,11 @@ class DoctrineExtension extends AbstractDoctrineExtension
         if (version_compare(Version::VERSION, "2.5.0-DEV") >= 0) {
             $listenerId = sprintf('doctrine.orm.%s_listeners.attach_entity_listeners', $entityManager['name']);
             $listenerDef = $container->setDefinition($listenerId, new Definition('%doctrine.orm.listeners.attach_entity_listeners.class%'));
-            $listenerDef->addTag('doctrine.event_listener', array('event' => 'loadClassMetadata'));
+            $listenerTagParams = array('event' => 'loadClassMetadata');
+            if (isset($entityManager['connection'])) {
+                $listenerTagParams['connection'] = $entityManager['connection'];
+            }
+            $listenerDef->addTag('doctrine.event_listener', $listenerTagParams);
         }
 
         if (isset($entityManager['second_level_cache'])) {

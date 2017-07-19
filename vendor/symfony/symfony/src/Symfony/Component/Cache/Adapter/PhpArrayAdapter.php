@@ -57,14 +57,15 @@ class PhpArrayAdapter implements AdapterInterface
      * stores arrays in its latest versions. This factory method decorates the given
      * fallback pool with this adapter only if the current PHP version is supported.
      *
-     * @param string $file The PHP file were values are cached
+     * @param string                 $file         The PHP file were values are cached
+     * @param CacheItemPoolInterface $fallbackPool Fallback for old PHP versions or opcache disabled
      *
      * @return CacheItemPoolInterface
      */
     public static function create($file, CacheItemPoolInterface $fallbackPool)
     {
         // Shared memory is available in PHP 7.0+ with OPCache enabled and in HHVM
-        if ((PHP_VERSION_ID >= 70000 && ini_get('opcache.enable')) || defined('HHVM_VERSION')) {
+        if ((\PHP_VERSION_ID >= 70000 && ini_get('opcache.enable')) || defined('HHVM_VERSION')) {
             if (!$fallbackPool instanceof AdapterInterface) {
                 $fallbackPool = new ProxyAdapter($fallbackPool);
             }
@@ -150,7 +151,7 @@ EOF;
         $tmpFile = uniqid($this->file, true);
 
         file_put_contents($tmpFile, $dump);
-        @chmod($tmpFile, 0666);
+        @chmod($tmpFile, 0666 & ~umask());
         unset($serialized, $unserialized, $value, $dump);
 
         @rename($tmpFile, $this->file);
@@ -373,15 +374,15 @@ EOF;
      */
     public static function throwOnRequiredClass($class)
     {
-        $e = new \ReflectionException(sprintf('Class %s does not exist', $class));
+        $e = new \ReflectionException("Class $class does not exist");
         $trace = $e->getTrace();
         $autoloadFrame = array(
             'function' => 'spl_autoload_call',
             'args' => array($class),
         );
-        $i = array_search($autoloadFrame, $trace);
+        $i = 1 + array_search($autoloadFrame, $trace, true);
 
-        if (false !== $i++ && isset($trace[$i]['function']) && !isset($trace[$i]['class'])) {
+        if (isset($trace[$i]['function']) && !isset($trace[$i]['class'])) {
             switch ($trace[$i]['function']) {
                 case 'get_class_methods':
                 case 'get_class_vars':

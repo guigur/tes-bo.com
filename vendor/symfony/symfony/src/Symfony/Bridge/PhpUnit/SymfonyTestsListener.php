@@ -13,6 +13,10 @@ namespace Symfony\Bridge\PhpUnit;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
+if (!class_exists('PHPUnit_Framework_BaseTestListener')) {
+    return;
+}
+
 /**
  * Collects and replays skipped tests.
  *
@@ -34,6 +38,7 @@ class SymfonyTestsListener extends \PHPUnit_Framework_BaseTestListener
      */
     public function __construct(array $mockedNamespaces = array())
     {
+        \PHPUnit_Util_Blacklist::$blacklistedClassNames['\Symfony\Bridge\PhpUnit\DeprecationErrorHandler'] = 1;
         \PHPUnit_Util_Blacklist::$blacklistedClassNames['\Symfony\Bridge\PhpUnit\SymfonyTestsListener'] = 1;
 
         $warn = false;
@@ -72,6 +77,12 @@ class SymfonyTestsListener extends \PHPUnit_Framework_BaseTestListener
         if (0 < $this->state) {
             file_put_contents($this->skippedFile, '<?php return '.var_export($this->isSkipped, true).';');
         }
+    }
+
+    public function globalListenerDisabled()
+    {
+        self::$globallyEnabled = false;
+        $this->state = -1;
     }
 
     public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
@@ -175,6 +186,10 @@ class SymfonyTestsListener extends \PHPUnit_Framework_BaseTestListener
     public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
         if ($this->expectedDeprecations) {
+            if (!in_array($test->getStatus(), array(\PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED, \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE), true)) {
+                $test->addToAssertionCount(count($this->expectedDeprecations));
+            }
+
             restore_error_handler();
 
             if (!in_array($test->getStatus(), array(\PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED, \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE, \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE, \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR), true)) {

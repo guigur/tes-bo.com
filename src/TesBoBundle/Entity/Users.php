@@ -59,14 +59,14 @@ class Users
     /**
      * @var string
      *
-     * @ORM\Column(name="ban_motif", type="string", length=255)
+     * @ORM\Column(name="ban_motif", type="string", length=255, nullable=true)
      */
     private $banMotif;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ban_until", type="string", length=255)
+     * @ORM\Column(name="ban_until", type="string", length=255, nullable=true)
      */
     private $banUntil;
 

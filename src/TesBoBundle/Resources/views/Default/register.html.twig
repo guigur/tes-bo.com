@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}register!{% endblock %}
+{% block stylesheets %}{{ parent() }}{% endblock %}
+
+{% block body %}
+    test
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% if error is defined %}{{ error }}{% endif %}
+{% endblock %}
+{% block javascripts %}{% endblock %}
+

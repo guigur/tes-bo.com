@@ -12,8 +12,11 @@
 namespace Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection;
 
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
+use Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler\AddAnnotationsCachedReaderPass;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\FrameworkExtension;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\ChainAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -24,6 +27,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\ClosureLoader;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Serializer\Mapping\Factory\CacheClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\XmlFileLoader;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
@@ -66,6 +70,32 @@ abstract class FrameworkExtensionTest extends TestCase
         $this->assertTrue($def->getArgument(1));
     }
 
+    public function testPropertyAccessCache()
+    {
+        $container = $this->createContainerFromFile('property_accessor');
+
+        if (!method_exists(PropertyAccessor::class, 'createCache')) {
+            return $this->assertFalse($container->hasDefinition('cache.property_access'));
+        }
+
+        $cache = $container->getDefinition('cache.property_access');
+        $this->assertSame(array(PropertyAccessor::class, 'createCache'), $cache->getFactory(), 'PropertyAccessor::createCache() should be used in non-debug mode');
+        $this->assertSame(AdapterInterface::class, $cache->getClass());
+    }
+
+    public function testPropertyAccessCacheWithDebug()
+    {
+        $container = $this->createContainerFromFile('property_accessor', array('kernel.debug' => true));
+
+        if (!method_exists(PropertyAccessor::class, 'createCache')) {
+            return $this->assertFalse($container->hasDefinition('cache.property_access'));
+        }
+
+        $cache = $container->getDefinition('cache.property_access');
+        $this->assertNull($cache->getFactory());
+        $this->assertSame(ArrayAdapter::class, $cache->getClass(), 'ArrayAdapter should be used in debug mode');
+    }
+
     /**
      * @expectedException \LogicException
      * @expectedExceptionMessage CSRF protection needs sessions to be enabled.
@@ -101,6 +131,13 @@ abstract class FrameworkExtensionTest extends TestCase
         $container = $this->createContainerFromFile('full');
 
         $this->assertTrue($container->hasDefinition('esi'), '->registerEsiConfiguration() loads esi.xml');
+    }
+
+    public function testSsi()
+    {
+        $container = $this->createContainerFromFile('full');
+
+        $this->assertTrue($container->hasDefinition('ssi'), '->registerSsiConfiguration() loads ssi.xml');
     }
 
     public function testEnabledProfiler()
@@ -357,7 +394,7 @@ abstract class FrameworkExtensionTest extends TestCase
         $this->assertEquals('translator.default', (string) $container->getAlias('translator'), '->registerTranslatorConfiguration() redefines translator service from identity to real translator');
         $options = $container->getDefinition('translator.default')->getArgument(3);
 
-        $files = array_map(function ($resource) { return realpath($resource); }, $options['resource_files']['en']);
+        $files = array_map('realpath', $options['resource_files']['en']);
         $ref = new \ReflectionClass('Symfony\Component\Validator\Validation');
         $this->assertContains(
             strtr(dirname($ref->getFileName()).'/Resources/translations/validators.en.xlf', '/', DIRECTORY_SEPARATOR),
@@ -440,12 +477,15 @@ abstract class FrameworkExtensionTest extends TestCase
         $container = $this->createContainerFromFile('full');
 
         $this->assertEquals($container->getParameter('kernel.cache_dir').'/annotations', $container->getDefinition('annotations.filesystem_cache')->getArgument(0));
-        $this->assertSame('annotations.cached_reader', (string) $container->getAlias('annotation_reader'));
         $this->assertSame('annotations.filesystem_cache', (string) $container->getDefinition('annotations.cached_reader')->getArgument(1));
     }
 
     public function testFileLinkFormat()
     {
+        if (ini_get('xdebug.file_link_format') || get_cfg_var('xdebug.file_link_format')) {
+            $this->markTestSkipped('A custom file_link_format is defined.');
+        }
+
         $container = $this->createContainerFromFile('full');
 
         $this->assertEquals('file%link%format', $container->getParameter('debug.file_link_format'));
@@ -815,6 +855,7 @@ abstract class FrameworkExtensionTest extends TestCase
             $container->getCompilerPassConfig()->setOptimizationPasses(array());
             $container->getCompilerPassConfig()->setRemovingPasses(array());
         }
+        $container->getCompilerPassConfig()->setBeforeRemovingPasses(array(new AddAnnotationsCachedReaderPass()));
         $container->compile();
 
         return self::$containerCache[$cacheKey] = $container;

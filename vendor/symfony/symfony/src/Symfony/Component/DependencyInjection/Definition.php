@@ -26,7 +26,7 @@ class Definition
     private $factory;
     private $shared = true;
     private $deprecated = false;
-    private $deprecationTemplate = 'The "%service_id%" service is deprecated. You should stop using it, as it will soon be removed.';
+    private $deprecationTemplate;
     private $properties = array();
     private $calls = array();
     private $configurator;
@@ -38,6 +38,8 @@ class Definition
     private $decoratedService;
     private $autowired = false;
     private $autowiringTypes = array();
+
+    private static $defaultDeprecationTemplate = 'The "%service_id%" service is deprecated. You should stop using it, as it will soon be removed.';
 
     protected $arguments;
 
@@ -106,7 +108,7 @@ class Definition
     }
 
     /**
-     * Gets the service that decorates this service.
+     * Gets the service that this service is decorating.
      *
      * @return null|array An array composed of the decorated service id, the new id for it and the priority of decoration, null if no service is decorated
      */
@@ -198,6 +200,10 @@ class Definition
      */
     public function replaceArgument($index, $argument)
     {
+        if (0 === count($this->arguments)) {
+            throw new OutOfBoundsException('Cannot replace arguments if none have been configured yet.');
+        }
+
         if ($index < 0 || $index > count($this->arguments) - 1) {
             throw new OutOfBoundsException(sprintf('The index "%d" is not in the range [0, %d].', $index, count($this->arguments) - 1));
         }
@@ -265,7 +271,7 @@ class Definition
     public function addMethodCall($method, array $arguments = array())
     {
         if (empty($method)) {
-            throw new InvalidArgumentException(sprintf('Method name cannot be empty.'));
+            throw new InvalidArgumentException('Method name cannot be empty.');
         }
         $this->calls[] = array($method, $arguments);
 
@@ -606,7 +612,7 @@ class Definition
      */
     public function getDeprecationMessage($id)
     {
-        return str_replace('%service_id%', $id, $this->deprecationTemplate);
+        return str_replace('%service_id%', $id, $this->deprecationTemplate ?: self::$defaultDeprecationTemplate);
     }
 
     /**
