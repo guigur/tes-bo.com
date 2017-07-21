@@ -8,17 +8,23 @@
   content: "";
   line-height: 0;
 }
-.clearfix:after {
+
+.clearfix:after
+{
   clear: both;
 }
-.hide-text {
+
+.hide-text
+{
   font: 0/0 a;
   color: transparent;
   text-shadow: none;
   background-color: transparent;
   border: 0;
 }
-.input-block-level {
+
+.input-block-level
+{
   display: block;
   width: 100%;
   min-height: 30px;
@@ -26,6 +32,7 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+
 body {
   padding-top: 80px;
   color: #34495e;

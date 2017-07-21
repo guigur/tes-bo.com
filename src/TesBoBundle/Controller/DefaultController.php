@@ -115,17 +115,12 @@ class DefaultController extends Controller
             $medias = self::getMedias($gallery->getId());
             return $this->render('TesBoBundle:Default:gallery.html.twig', array('user' => $user, "gallery" => $gallery, "medias" => $medias));
         }
-        else {
-
-
-/*
-            $provider = new GoogleProvider;
-
-            $tts = new TextToSpeech("Hello World", $provider);
-            $tts->save("/tmp/hello.mp3");
-*/
-
+        else if ($user = "homepage")
+        {
             return $this->render('TesBoBundle:Default:index.html.twig', array('user' => $user, "gallery" => $gallery));
         }
+        else
+            return $this->redirectToRoute('tes_bo_homepage');
+
     }
 }
